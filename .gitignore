@@ -1,1 +1,3 @@
-apikey
+api_key
+.ipynb_checkpoints/
+__pycache__/
