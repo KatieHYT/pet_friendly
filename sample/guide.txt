@@ -1,1 +1,1 @@
-based on the following comments for the store, tell me is this store pet-friendly? just tell me yes/np/neutral before your reasons. and start your reasons after a special @@@@@
+Based on the following comments for the store, tell me is this store pet-friendly? Only tell me yes/no/neutral. Nothing more!
