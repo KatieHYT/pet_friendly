@@ -34,6 +34,11 @@ def gather_judge_input(guide_path, fn_path_list):
 
     return txt
 
+def remove_empty_lines(input_string):
+    lines = input_string.splitlines()
+    non_empty_lines = [line for line in lines if line.strip()]
+    return '\n'.join(non_empty_lines)
+
 if __name__ == '__main__':
     raw_review_dir = './raw_review/'
     place_id_list = os.listdir(raw_review_dir)
@@ -45,16 +50,19 @@ if __name__ == '__main__':
     guide_path = './sample/guide.txt'
     
     place_id = place_id_list[0]
-    
+    storeid2storename_map = read_json('./storeid2storename_map.json')
     # check the attribute that stores set by themselves on google map
+    answer = None
     for _idx, place_id in enumerate(place_id_list):
         result = check_store_attr(place_id)
         if result is not None:
-            print(result)
+            answer = result
+            reason = 'It is shown in google map.'
         else:
             # no review talk about it, return neutral
             if not (place_id in place_id_w_keyword_list):
-                print('neutral')
+                answer = 'Neutral'
+                reason = 'Not shown in google map and there is no review about it.'
             else: # ask ChatGPT to judge the review
                 place_id_w_keyword_dir = os.path.join(filter_review_dir, place_id)
                 fn_list = os.listdir(place_id_w_keyword_dir)
@@ -63,5 +71,7 @@ if __name__ == '__main__':
                 judge_result = talk2gpt(judge_input)
                 
                 answer, reason = judge_result.split("@@@@@")
-
-                print(answer)
+        reason = remove_empty_lines(reason)
+        store_name = storeid2storename_map[place_id]
+        print('='*30)
+        print(f'Is {store_name} pet-friendly? \n{answer}\n\t{reason}')
