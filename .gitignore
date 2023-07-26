@@ -1,3 +1,6 @@
 api_key
 .ipynb_checkpoints/
 __pycache__/
+filtered_review/
+raw_review/
+backup
