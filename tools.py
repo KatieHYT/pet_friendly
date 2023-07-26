@@ -19,3 +19,9 @@ def save_string_to_file(file_path, text):
         print("String successfully saved to file.")
     except Exception as e:
         print(f"Error occurred while saving the string: {e}")
+
+def read_json(f_path):
+   with open(f_path, 'r') as f:
+       data = json.load(f)
+
+   return data
