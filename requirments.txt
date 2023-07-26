@@ -1,3 +1,2 @@
-googlemaps
-selenium
 openai
+#pip install --upgrade requests

@@ -26,7 +26,6 @@ def check_store_attr(place_id):
 #                     print(_attr_dict)
     return None
 
-
 def gather_judge_input(guide_path, fn_path_list):
     guide = get_file_contents(guide_path)
     review_list = [get_file_contents(_fn) for _fn in fn_path_list]
@@ -34,7 +33,6 @@ def gather_judge_input(guide_path, fn_path_list):
     txt = guide + ': ' + reviews
 
     return txt
-
 
 if __name__ == '__main__':
     raw_review_dir = './raw_review/'
