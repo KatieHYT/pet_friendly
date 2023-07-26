@@ -1,4 +1,5 @@
 import json
+import openai
 
 def get_file_contents(filename):
     """ 
@@ -27,3 +28,28 @@ def read_json(f_path):
        data = json.load(f)
 
    return data
+
+def talk2gpt(txt):
+    msg = {
+        "role": "user",
+        "content": txt,
+    #     "temperature": 0.5,
+    #     "top_p": 0.1,
+        "name": "kt",
+    }
+
+    # create a chat completion
+    chat_completion = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            msg
+        ],
+    #     temperature=1,
+    #     top_p=0.1,
+    #     n=3,
+    )
+
+    reply = chat_completion.choices[0].message.content
+    
+    return reply
+    
