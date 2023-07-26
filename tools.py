@@ -1,3 +1,5 @@
+import json
+
 def get_file_contents(filename):
     """ 
     src: https://github.com/dylburger/reading-api-key-from-file/blob/master/Keeping%20API%20Keys%20Secret.ipynb
