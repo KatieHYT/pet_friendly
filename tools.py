@@ -33,9 +33,9 @@ def talk2gpt(txt):
     msg = {
         "role": "user",
         "content": txt,
-    #     "temperature": 0.5,
+         #"temperature": 0.7,
     #     "top_p": 0.1,
-        "name": "kt",
+        "name": "cradle",
     }
 
     # create a chat completion
@@ -53,3 +53,8 @@ def talk2gpt(txt):
     
     return reply
     
+def remove_empty_lines(input_string):
+    lines = input_string.splitlines()
+    non_empty_lines = [line for line in lines if line.strip()]
+    return '\n'.join(non_empty_lines)
+
