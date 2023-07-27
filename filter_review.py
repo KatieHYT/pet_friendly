@@ -39,5 +39,3 @@ if __name__ == '__main__':
                     os.makedirs(save_dir)
                 save_path = os.path.join(save_dir, f'{datetime}_{review_id}.txt')
                 save_string_to_file(save_path, review_text)
-    
-            
