@@ -13,6 +13,9 @@ class GPTTaskAssigner():
         return talk2gpt(input_msg)
 
     def judge_store_pet_friendly(self, input_msg):
+        
+        #TODO(hyt): the following is a temporary solution before we include latitude and lontitude
+        # START
         _map = read_json('/TOP/home/kt/DATA/cradle/google_review/storeid2storename_map.json')
         name_list = []
         _map_rev = {}
@@ -24,6 +27,8 @@ class GPTTaskAssigner():
         print(matches)
         store_name = matches[0]
         place_id = _map_rev[store_name]
+        #### END
+
 
         answer, reason = self.pfj.judge_store(place_id)
 
