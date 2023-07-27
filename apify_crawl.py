@@ -1,3 +1,4 @@
+from tools import get_file_contents
 from apify_client import ApifyClient
 from pprint import pprint
 import os
