@@ -2,7 +2,7 @@ import openai
 import json
 
 from .pet_friendly_judger import PetFriendlyJudger
-from .tools import read_json
+from .tools import read_json, talk2gpt
 
 class GPTTaskAssigner():
     def __init__(self, api_key):
