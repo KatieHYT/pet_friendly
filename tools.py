@@ -39,6 +39,7 @@ def talk2gpt(txt):
     }
 
     # create a chat completion
+    # TODO: stream the chat completion
     chat_completion = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
