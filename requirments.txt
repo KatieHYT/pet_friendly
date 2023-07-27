@@ -1,2 +1,3 @@
 openai
+pip install apify-client
 #pip install --upgrade requests
