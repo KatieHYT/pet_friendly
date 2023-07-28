@@ -29,7 +29,7 @@ def read_json(f_path):
 
    return data
 
-def talk2gpt(txt):
+def talk2gpt(txt, if_stream=False):
     msg = {
         "role": "user",
         "content": txt,
@@ -45,14 +45,17 @@ def talk2gpt(txt):
         messages=[
             msg
         ],
+        stream=if_stream,
     #     temperature=1,
     #     top_p=0.1,
     #     n=3,
     )
-
-    reply = chat_completion.choices[0].message.content
     
-    return reply
+    if if_stream:
+        return chat_completion
+    else:
+        return chat_completion.choices[0].message.content
+
     
 def remove_empty_lines(input_string):
     lines = input_string.splitlines()
