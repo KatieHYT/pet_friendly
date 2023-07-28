@@ -63,7 +63,7 @@ class PetFriendlyJudger():
                 json.dump(storeid2storename_map, f)
             print(f'Saved to: {save_path}')
 
-    def judge_store(self, place_id):
+    def judge_store(self, place_id, if_stream=False):
         place_id_w_keyword_list = os.listdir(self.filter_review_dir)
         
         # check the attribute that stores set by themselves on google map
@@ -81,9 +81,12 @@ class PetFriendlyJudger():
                 fn_list = os.listdir(place_id_w_keyword_dir)
                 fn_path_list = [os.path.join(place_id_w_keyword_dir, _fn) for _fn in fn_list]
                 judge_input = self._gather_judge_input(self.guide_path, fn_path_list)
-                judge_result = talk2gpt(judge_input)
+                judge_result = talk2gpt(judge_input, if_stream=if_stream)
                 
                 # we ask chatgpt use @@@@@ to seperate answer and reason.
-                answer, reason = judge_result.split("@@@@@")
-    
-        return answer, reason
+        if if_stream:
+            return judge_result
+        else:
+            answer, reason = judge_result.split("@@@@@")
+
+            return answer, reason
