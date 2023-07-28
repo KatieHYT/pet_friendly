@@ -5,9 +5,10 @@ from .pet_friendly_judger import PetFriendlyJudger
 from .tools import read_json, talk2gpt
 
 class GPTTaskAssigner():
-    def __init__(self, api_key):
+    def __init__(self, api_key, pfj_src_dict):
         openai.api_key = api_key
-        self.pfj = PetFriendlyJudger()
+        self.pfj_src_dict = pfj_src_dict
+        self.pfj = PetFriendlyJudger(self.pfj_src_dict)
 
     def chat(self, input_msg):
         return talk2gpt(input_msg)
@@ -16,7 +17,7 @@ class GPTTaskAssigner():
         
         #TODO(hyt): the following is a temporary solution before we include latitude and lontitude
         # START
-        _map = read_json('/TOP/home/kt/DATA/cradle/google_review/storeid2storename_map.json')
+        _map = read_json(self.pfj_src_dict['storeid2storename_map_path'])
         name_list = []
         _map_rev = {}
         for k, v in _map.items():

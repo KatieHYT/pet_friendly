@@ -12,13 +12,11 @@ from .tools import (
         )
 
 class PetFriendlyJudger():
-    def __init__(self):
-        #TODO(hyt): an assertion to check if openai's api key has been activated
-        #TODO(hyt): find a way to load paths
-        self.raw_review_dir = '/TOP/home/kt/DATA/cradle/google_review/raw_review/'
-        self.filter_review_dir = '/TOP/home/kt/DATA/cradle/google_review/filtered_review/'
-        self.guide_path = '/TOP/home/kt/DATA/cradle/google_review/sample/guide.txt'
-        self.storeid2storename_map = read_json('/TOP/home/kt/DATA/cradle/google_review/storeid2storename_map.json')
+    def __init__(self, pfj_src_dict):
+        self.raw_review_dir = pfj_src_dict['raw_review_dir']
+        self.filter_review_dir = pfj_src_dict['filter_review_dir']
+        self.guide_path = pfj_src_dict['guide_path']
+        self.storeid2storename_map = read_json(pfj_src_dict['storeid2storename_map_path'])
 
     def _check_store_attr(self, place_id):
         place_dir = os.path.join(self.raw_review_dir, place_id)
