@@ -82,11 +82,10 @@ class PetFriendlyJudger():
                 fn_path_list = [os.path.join(place_id_w_keyword_dir, _fn) for _fn in fn_list]
                 judge_input = self._gather_judge_input(self.guide_path, fn_path_list)
                 judge_result = talk2gpt(judge_input, if_stream=if_stream)
+                answer, reason = judge_result.split("@@@@@")
                 
                 # we ask chatgpt use @@@@@ to seperate answer and reason.
         if if_stream:
             return judge_result
         else:
-            answer, reason = judge_result.split("@@@@@")
-
             return answer, reason
