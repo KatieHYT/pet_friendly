@@ -28,9 +28,16 @@ if __name__ == '__main__':
 
     #test place id
     place_id = place_id_list[3]
-    answer, reason = pet_friendly_judger.judge_store(place_id)
-    reason = remove_empty_lines(reason)
+    reply= pet_friendly_judger.judge_store(place_id, if_stream=True)
     storeid2storename_map = read_json(pfj_src_dict['storeid2storename_map_path'])
-    print(place_id)
     store_name = storeid2storename_map[place_id]
-    print(f'Is {store_name} pet-friendly? \n{answer}\n\t{reason}')
+    print(f'Store Name: {store_name}')
+    while True:
+        try:
+            chunk = next(reply)
+            content = chunk["choices"][0].get("delta", {}).get("content")
+            if content is not None:
+                print(content)
+        
+        except StopIteration:
+            break 
