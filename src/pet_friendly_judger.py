@@ -2,6 +2,7 @@ import os
 import json
 from pprint import pprint
 import openai
+import copy
 
 from .profile_manager import ProfileManager
 from .tools import (
@@ -77,13 +78,38 @@ class PetFriendlyJudger():
 
         place_id_w_keyword_list = os.listdir(self.filter_review_dir)
         if not (place_id in place_id_w_keyword_list):
+            #class EmptyIterator:
+            #    def __iter__(self):
+            #        return self
+            #
+            #    def __next__(self):
+            #        raise StopIteration
             class EmptyIterator:
+                def __init__(self, ):
+                    display_text = ['There', ' is', ' no', ' comment', ' about', ' it.']
+                    mimic_gpt_strem_data_form = {
+                        'choices':[
+                            {'delta': {'content': 'hello'}}
+                        ]
+                    }
+                    self.data = []
+                    for _text in display_text:
+                        _tmp = copy.deepcopy(mimic_gpt_strem_data_form)
+                        _tmp['choices'][0]['delta']['content'] = _text
+                        self.data.append(_tmp)
+                    self.index = 0
+            
                 def __iter__(self):
                     return self
             
                 def __next__(self):
-                    raise StopIteration
-            judge_result = iter(EmptyIterator())
+                    if self.index < len(self.data):
+                        value = self.data[self.index]
+                        self.index += 1
+                        return value
+                    else:
+                        raise StopIteration
+            judge_result = EmptyIterator()
         else: 
             place_id_w_keyword_dir = os.path.join(self.filter_review_dir, place_id)
             fn_list = os.listdir(place_id_w_keyword_dir)
@@ -114,7 +140,7 @@ class PetFriendlyJudger():
                 # we ask chatgpt use @@@@@ to seperate answer and reason.
         ### END
         if if_stream:
-            return judge_result
+            return _r1_place_name, judge_result
         else:
             answer, reason = judge_result.split("@@@@@")
 
