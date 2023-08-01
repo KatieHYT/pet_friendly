@@ -2,6 +2,7 @@ import json
 import os
 import openai
 from apify_client import ApifyClient
+from datetime import datetime, timedelta
 
 def get_file_contents(filename):
     """ 
@@ -119,3 +120,9 @@ def extract_place_name_lat_lng(url):
     longitude = float(_longitude)
     
     return store_name, lattitude, longitude
+
+def time_difference(current_time_str, previous_time_str, time_format = "%Y_%m_%dT%H_%M_%S_%fZ"):
+    current_time = datetime.strptime(current_time_str, time_format)
+    previous_time = datetime.strptime(previous_time_str, time_format)
+    time_diff = current_time - previous_time
+    return time_diff

@@ -19,11 +19,13 @@ class PetFriendlyJudger():
         self.filter_review_dir = pfj_src_dict['filter_review_dir']
         self.guide_path = pfj_src_dict['guide_path']
         self.storeid2storename_map = read_json(pfj_src_dict['storeid2storename_map_path'])
+        self.last_update_dt_df_path = pfj_src_dict['last_update_dt_df_path']
         apify_api_key = get_file_contents(pfj_src_dict['apify_api_key_path'])
         self.pm = ProfileManager(
                 apify_api_key=apify_api_key,
                 raw_review_dir=self.raw_review_dir,
                 filter_review_dir=self.filter_review_dir,
+                last_update_dt_df_path=self.last_update_dt_df_path,
                 )
 
     def _check_store_attr(self, place_id):
@@ -74,7 +76,7 @@ class PetFriendlyJudger():
     def judge_store(self, url, if_stream=False):
          
         url_list = [{'url': url}]
-        place_id, _r1_datetime, _r1_review_id, _r1_place_name = self.pm.seek_and_update(url_list)
+        place_id, _r1_place_name = self.pm.seek_and_update(url_list)
 
         place_id_w_keyword_list = os.listdir(self.filter_review_dir)
         if not (place_id in place_id_w_keyword_list):
