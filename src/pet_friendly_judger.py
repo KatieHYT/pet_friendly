@@ -3,6 +3,7 @@ import json
 from pprint import pprint
 import openai
 
+from .profile_manager import ProfileManager
 from .tools import (
         get_file_contents,
         save_string_to_file,
@@ -17,6 +18,8 @@ class PetFriendlyJudger():
         self.filter_review_dir = pfj_src_dict['filter_review_dir']
         self.guide_path = pfj_src_dict['guide_path']
         self.storeid2storename_map = read_json(pfj_src_dict['storeid2storename_map_path'])
+        apify_api_key = get_file_contents(pfj_src_dict['apify_api_key_path'])
+        self.pm = ProfileManager(apify_api_key=apify_api_key, raw_review_dir=self.raw_review_dir)
 
     def _check_store_attr(self, place_id):
         place_dir = os.path.join(self.raw_review_dir, place_id)
@@ -63,27 +66,39 @@ class PetFriendlyJudger():
                 json.dump(storeid2storename_map, f)
             print(f'Saved to: {save_path}')
 
-    def judge_store(self, place_id, if_stream=False):
-        place_id_w_keyword_list = os.listdir(self.filter_review_dir)
-        
-        # check the attribute that stores set by themselves on google map
-        result = self._check_store_attr(place_id)
-        if result is not None:
-            answer = result
-            reason = 'It is shown in google map.'
-        else:
-            # no review talk about it, return neutral
-            if not (place_id in place_id_w_keyword_list):
-                answer = 'Neutral'
-                reason = 'Not shown in google map and there is no review about it.'
-            else: # ask ChatGPT to judge the review
-                place_id_w_keyword_dir = os.path.join(self.filter_review_dir, place_id)
-                fn_list = os.listdir(place_id_w_keyword_dir)
-                fn_path_list = [os.path.join(place_id_w_keyword_dir, _fn) for _fn in fn_list]
-                judge_input = self._gather_judge_input(self.guide_path, fn_path_list)
-                judge_result = talk2gpt(judge_input, if_stream=if_stream)
+    def judge_store(self, url, if_stream=False):
+         
+        url_list = [{'url': url}]
+        place_id, _r1_datetime, _r1_review_id, _r1_place_name = self.pm.seek_and_update(url_list)
+
+        place_id_w_keyword_dir = os.path.join(self.filter_review_dir, place_id)
+        fn_list = os.listdir(place_id_w_keyword_dir)
+        fn_path_list = [os.path.join(place_id_w_keyword_dir, _fn) for _fn in fn_list]
+        judge_input = self._gather_judge_input(self.guide_path, fn_path_list)
+        judge_result = talk2gpt(judge_input, if_stream=if_stream)
+        ### The following is designed to save money
+        ### START
+        #place_id_w_keyword_list = os.listdir(self.filter_review_dir)
+        #
+        ## check the attribute that stores set by themselves on google map
+        #result = self._check_store_attr(place_id)
+        #if result is not None:
+        #    answer = result
+        #    reason = 'It is shown in google map.'
+        #else:
+        #    # no review talk about it, return neutral
+        #    if not (place_id in place_id_w_keyword_list):
+        #        answer = 'Neutral'
+        #        reason = 'Not shown in google map and there is no review about it.'
+        #    else: # ask ChatGPT to judge the review
+        #        place_id_w_keyword_dir = os.path.join(self.filter_review_dir, place_id)
+        #        fn_list = os.listdir(place_id_w_keyword_dir)
+        #        fn_path_list = [os.path.join(place_id_w_keyword_dir, _fn) for _fn in fn_list]
+        #        judge_input = self._gather_judge_input(self.guide_path, fn_path_list)
+        #        judge_result = talk2gpt(judge_input, if_stream=if_stream)
                 
                 # we ask chatgpt use @@@@@ to seperate answer and reason.
+        ### END
         if if_stream:
             return judge_result
         else:
