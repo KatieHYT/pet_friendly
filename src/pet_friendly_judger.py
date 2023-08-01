@@ -19,7 +19,11 @@ class PetFriendlyJudger():
         self.guide_path = pfj_src_dict['guide_path']
         self.storeid2storename_map = read_json(pfj_src_dict['storeid2storename_map_path'])
         apify_api_key = get_file_contents(pfj_src_dict['apify_api_key_path'])
-        self.pm = ProfileManager(apify_api_key=apify_api_key, raw_review_dir=self.raw_review_dir)
+        self.pm = ProfileManager(
+                apify_api_key=apify_api_key,
+                raw_review_dir=self.raw_review_dir,
+                filter_review_dir=self.filter_review_dir,
+                )
 
     def _check_store_attr(self, place_id):
         place_dir = os.path.join(self.raw_review_dir, place_id)
@@ -71,11 +75,21 @@ class PetFriendlyJudger():
         url_list = [{'url': url}]
         place_id, _r1_datetime, _r1_review_id, _r1_place_name = self.pm.seek_and_update(url_list)
 
-        place_id_w_keyword_dir = os.path.join(self.filter_review_dir, place_id)
-        fn_list = os.listdir(place_id_w_keyword_dir)
-        fn_path_list = [os.path.join(place_id_w_keyword_dir, _fn) for _fn in fn_list]
-        judge_input = self._gather_judge_input(self.guide_path, fn_path_list)
-        judge_result = talk2gpt(judge_input, if_stream=if_stream)
+        place_id_w_keyword_list = os.listdir(self.filter_review_dir)
+        if not (place_id in place_id_w_keyword_list):
+            class EmptyIterator:
+                def __iter__(self):
+                    return self
+            
+                def __next__(self):
+                    raise StopIteration
+            judge_result = iter(EmptyIterator())
+        else: 
+            place_id_w_keyword_dir = os.path.join(self.filter_review_dir, place_id)
+            fn_list = os.listdir(place_id_w_keyword_dir)
+            fn_path_list = [os.path.join(place_id_w_keyword_dir, _fn) for _fn in fn_list]
+            judge_input = self._gather_judge_input(self.guide_path, fn_path_list)
+            judge_result = talk2gpt(judge_input, if_stream=if_stream)
         ### The following is designed to save money
         ### START
         #place_id_w_keyword_list = os.listdir(self.filter_review_dir)
