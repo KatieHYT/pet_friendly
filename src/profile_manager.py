@@ -64,7 +64,8 @@ class ProfileManager():
                 print('======newer review exist on cloud')
                 #TODO: how to properly set N_NEWEST 
                 N_NEWEST=100
-                self._go_apify(url, n_newest=N_NEWEST)
+                reviews = apify_crawl(self.apify_api_key, url_list, max_reviews=N_NEWEST)
+                save_reviews(reviews, self.raw_review_dir)
                 self._filter_review(_r1_place_id)
 
             else:
