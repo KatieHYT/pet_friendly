@@ -46,7 +46,12 @@ class PetFriendlyJudger():
 
     def _gather_judge_input(self, guide_path, fn_path_list):
         guide = get_file_contents(guide_path)
-        review_list = [get_file_contents(_fn) for _fn in fn_path_list]
+        review_list = []
+        for _fn in fn_path_list:
+            _review_time = _fn.split("/")[-1]
+            _review_time = _review_time.split("Z_")[0]
+            _review_content = get_file_contents(_fn)
+            review_list.append( f"[review time]: {_review_time} [review content]: {_review_content}")
         reviews = "\n".join(review_list)
         txt = guide + ': ' + reviews
     
