@@ -81,8 +81,12 @@ class PetFriendlyJudger():
             print(f'Saved to: {save_path}')
 
     def judge_store(self, input_info, if_stream=False):
-         
-        url_list = [{'url': input_info}]
+        
+        if ('/maps/search' in input_info) or ('/maps/place' in input_info):
+            url = input_info
+        else:
+            url = f'https://www.google.com/maps/place/?q=place_id:{input_info}'
+        url_list = [{'url': url}]
         place_id, _r1_place_name = self.pm.seek_and_update(url_list)
 
         place_id_w_keyword_list = os.listdir(self.filter_review_dir)

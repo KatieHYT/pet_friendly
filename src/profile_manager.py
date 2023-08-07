@@ -75,8 +75,6 @@ class ProfileManager():
             return None, None
         else:
             latlng = self.url2latlng[url]
-            print(f'JSON: {latlng}')
-            print(self.last_update_dt_df['latlng'])
             if latlng in list(self.last_update_dt_df['latlng']):
                 _df = self.last_update_dt_df[self.last_update_dt_df['latlng']==latlng]
                 previous_dt_str = _df['last_update_dt'].item()
@@ -140,17 +138,20 @@ class ProfileManager():
             # log a record into table
             current_time = datetime.now()
             current_time_str = current_time.strftime("%Y_%m_%dT%H_%M_%S_%fZ")
-            row = {
-                #"url": url,
-                "latlng": _r1_latlng, 
-                #"place_id": _r1_place_id,
-                "place_name": _r1_place_name,
-                "last_update_dt": current_time_str,
-            }
-            self.last_update_dt_df = self.last_update_dt_df.append(row, ignore_index=True)
+            if _r1_latlng in list(self.last_update_dt_df['latlng']):
+                self.last_update_dt_df.loc[self.last_update_dt_df['latlng']==_r1_latlng, 'last_update_dt'] = current_time_str
+            else:
+                row = {
+                    #"url": url,
+                    "latlng": _r1_latlng, 
+                    #"place_id": _r1_place_id,
+                    "place_name": _r1_place_name,
+                    "last_update_dt": current_time_str,
+                }
+                self.last_update_dt_df = self.last_update_dt_df.append(row, ignore_index=True)
             self.last_update_dt_df.to_csv(self.last_update_dt_df_path, index = False)
             print(f"Complete updating at {current_time}.")
-        
+      
         return _r1_latlng, _r1_place_name
     
     def _filter_review(self, _place_id):
