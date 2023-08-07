@@ -14,7 +14,7 @@ class GPTTaskAssigner():
     def chat(self, input_msg):
         return talk2gpt(input_msg)
 
-    def judge_store_pet_friendly(self, url, if_stream=False):
+    def judge_store_pet_friendly(self, input_info, if_stream=False):
         
         ##TODO(hyt): the following is a temporary solution before we include latitude and lontitude
         ## START
@@ -32,9 +32,6 @@ class GPTTaskAssigner():
         ##### END
 
         if if_stream:
-            return self.pfj.judge_store(url, if_stream=if_stream)
+            return self.pfj.judge_store(input_info, if_stream=if_stream)
         else:
-            answer, reason = self.pfj.judge_store(place_id)
-            content = f"{store_name}'s pet-friendly status might be {answer} \n {reason}"
-
-            return content
+            assert 1==0, 'Not implemented.'

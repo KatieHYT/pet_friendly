@@ -27,10 +27,15 @@ def save_string_to_file(file_path, text):
         print(f"Error occurred while saving the string: {e}")
 
 def read_json(f_path):
-   with open(f_path, 'r') as f:
-       data = json.load(f)
+    with open(f_path, 'r') as f:
+        data = json.load(f)
+ 
+    return data
 
-   return data
+def save_json(f, f_path):
+    # Write the data to the JSON file
+    with open(f_path, "w") as json_file:
+        json.dump(f, json_file)
 
 def talk2gpt(txt, if_stream=False):
     msg = {
@@ -89,8 +94,10 @@ def get_review_info(reviews):
         datetime = datetime.replace(".", "_")
         review_id = _r['reviewId']
         place_name = _r['title']
+        lat = _r['location']['lat']
+        lng = _r['location']['lng']
 
-    return place_id, datetime, review_id, place_name
+    return place_id, datetime, review_id, place_name, lat, lng
 
 def save_reviews(reviews, raw_review_dir):
     for _id, _r in enumerate(reviews):
@@ -100,8 +107,16 @@ def save_reviews(reviews, raw_review_dir):
         datetime = datetime.replace(":", "_")
         datetime = datetime.replace(".", "_")
         review_id = _r['reviewId']
+        lat = _r['location']['lat']
+        lng = _r['location']['lng']
 
-        review_dir = os.path.join(raw_review_dir, place_id)
+        lat_str = str(lat).replace(".", "_")
+        lat_str = str(lat_str).replace("-", "m")
+        lng_str = str(lng).replace(".", "_")
+        lng_str = str(lng_str).replace("-", "m")
+        latlng = f"{lat_str}_{lng_str}"
+
+        review_dir = os.path.join(raw_review_dir, latlng)
         if not os.path.exists(review_dir):
             os.makedirs(review_dir)
         file = os.path.join(review_dir, f'{datetime}_{review_id}.json')
