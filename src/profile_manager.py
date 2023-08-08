@@ -103,15 +103,12 @@ class ProfileManager():
             print('Updating...')
             _review1 = apify_crawl(self.apify_api_key, url_list, max_reviews=1)
             _, _r1_datetime, _, _r1_place_name, _r1_lat, _r1_lng = get_review_info(_review1)
-            print(f'place name: {_r1_place_name}')
             #print(f'place id: {_r1_place_id}')
-            print(f'lat, lng: {_r1_lat}, {_r1_lng}')
             lat_str = str(_r1_lat).replace(".", "_")
             lat_str = str(lat_str).replace("-", "m")
             lng_str = str(_r1_lng).replace(".", "_")
             lng_str = str(lng_str).replace("-", "m")
             _r1_latlng = f"{lat_str}_{lng_str}"
-            print(f"LATLNG: {_r1_latlng}")
               
             self.url2latlng[url] = _r1_latlng
             save_json(self.url2latlng, self.url2latlng_path)
@@ -152,6 +149,8 @@ class ProfileManager():
             self.last_update_dt_df.to_csv(self.last_update_dt_df_path, index = False)
             print(f"Complete updating at {current_time}.")
       
+        print(f'place name: {_r1_place_name}')
+        print(f"LATLNG: {_r1_latlng}")
         return _r1_latlng, _r1_place_name
     
     def _filter_review(self, _place_id):
