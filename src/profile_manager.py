@@ -72,8 +72,12 @@ class ProfileManager():
 
     def _seek(self, url, freeze_mins):
         if not url in self.url2latlng.keys():
+            print("The url has never been crawled.")
+            print(f"url: {url}")
             return None, None
         else:
+            print("The url has been crawled.")
+            print(f"url: {url}")
             latlng = self.url2latlng[url]
             if latlng in list(self.last_update_dt_df['latlng']):
                 _df = self.last_update_dt_df[self.last_update_dt_df['latlng']==latlng]
@@ -81,14 +85,17 @@ class ProfileManager():
                 current_dt = datetime.now()
                 current_dt_str = current_dt.strftime("%Y_%m_%dT%H_%M_%S_%fZ")
                 time_diff = time_difference(current_dt_str, previous_dt_str)
-                if time_diff < timedelta(minutes=freeze_mins):
+                freeze_mins_delta = timedelta(minutes=freeze_mins)
+                if time_diff < freeze_mins_delta:
                     print(f"No real-time crawling since just did it within {freeze_mins} mins.")
                     print(f"Current time: {current_dt_str}")
                     print(f"Previous crawl time: {previous_dt_str}")
                     return _df['latlng'].item(), _df['place_name'].item()
                 else:
+                    print(f"The url has been crawled since {time_diff} already > freeze_mins_delta({freeze_mins_delta})")
                     return None, None
             else:
+                print("The url is not in last_update_dt_df")
                 return None, None
 
     def seek_and_update(self, url_list, freeze_mins=7500):
