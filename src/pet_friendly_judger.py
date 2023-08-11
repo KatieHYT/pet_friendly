@@ -108,12 +108,7 @@ class PetFriendlyJudger():
                 json.dump(storeid2storename_map, f)
             print(f'Saved to: {save_path}')
 
-    def judge_store(self, input_info, if_stream=False):
-        
-        if ('/maps/search' in input_info) or ('/maps/place' in input_info):
-            url = input_info
-        else:
-            url = f'https://www.google.com/maps/place/?q=place_id:{input_info}'
+    def judge_store(self, url, if_stream=False):
         url_list = [{'url': url}]
         latlng, official_name = self.pm.check_and_update(url_list, freeze_mins=self.freeze_mins)
 

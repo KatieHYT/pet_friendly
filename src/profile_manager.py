@@ -89,12 +89,11 @@ class ProfileManager():
     def _update_url2latlng(self, url_list):
         url = url_list[0]['url']
         _review1 = apify_crawl(self.apify_api_key, url_list, max_reviews=1)
-        _, _r1_latest_review_dt, _, _r1_official_name, _r1_lat, _r1_lng = get_review_info(_review1)
-        _r1_latlng = make_latlng(_r1_lat, _r1_lng)
-        self.url2latlng[url] = _r1_latlng
+        latest_review_dt, official_name, latlng = get_review_info(_review1)
+        self.url2latlng[url] = latlng
         save_json(self.url2latlng, self.url2latlng_path)
 
-        return _r1_latlng, _r1_latest_review_dt, _r1_official_name
+        return latest_review_dt, official_name, latlng
     
     def _update_profile(self, url_list, _r1_latlng, _r1_datetime):
         if_profile_exist = self._check_profile_exist(_r1_latlng)
@@ -132,9 +131,13 @@ class ProfileManager():
         print(f"In url2latlng? {is_in_url2latlng} ; Freeze now? {is_freeze}")
         if (not is_in_url2latlng) or (not is_freeze):
             print('Updating url2latlng...')
-            latlng,  latest_review_dt, official_name = self._update_url2latlng(url_list)
-            print('Updating profile...')
-            self._update_profile(url_list, latlng, latest_review_dt)
+            latest_review_dt, official_name, latlng = self._update_url2latlng(url_list)
+            if latest_review_dt is None:
+                print("No reviews.")
+                pass
+            else:
+                print('Updating profile...')
+                self._update_profile(url_list, latlng, latest_review_dt)
             
             print('Updating last_update_dt_df...')
             # log a record into table

@@ -87,17 +87,20 @@ def apify_crawl(api_key, url_list, max_reviews, reviews_sort="newest"):
 
 def get_review_info(reviews):
     for _id, _r in enumerate(reviews):
-        place_id = _r['placeId']
-        datetime = _r['publishedAtDate']
-        datetime = datetime.replace("-", "_")
-        datetime = datetime.replace(":", "_")
-        datetime = datetime.replace(".", "_")
-        review_id = _r['reviewId']
-        place_name = _r['title']
+        if 'publishedAtDate' not in _r.keys():
+            datetime = None
+        else:
+            datetime = _r['publishedAtDate']
+            datetime = datetime.replace("-", "_")
+            datetime = datetime.replace(":", "_")
+            datetime = datetime.replace(".", "_")
+        
+        official_name = _r['title']
         lat = _r['location']['lat']
         lng = _r['location']['lng']
+        latlng = make_latlng(lat, lng)
 
-    return place_id, datetime, review_id, place_name, lat, lng
+        return datetime, official_name, latlng
 
 def save_reviews(reviews, raw_review_dir):
     for _id, _r in enumerate(reviews):
