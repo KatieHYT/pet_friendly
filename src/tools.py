@@ -22,7 +22,7 @@ def save_string_to_file(file_path, text):
     try:
         with open(file_path, 'w') as file:
             file.write(text)
-        print("String successfully saved to file.")
+        #print("String successfully saved to file.")
     except Exception as e:
         print(f"Error occurred while saving the string: {e}")
 
@@ -101,7 +101,6 @@ def get_review_info(reviews):
 
 def save_reviews(reviews, raw_review_dir):
     for _id, _r in enumerate(reviews):
-        place_id = _r['placeId']
         datetime = _r['publishedAtDate']
         datetime = datetime.replace("-", "_")
         datetime = datetime.replace(":", "_")
@@ -109,16 +108,13 @@ def save_reviews(reviews, raw_review_dir):
         review_id = _r['reviewId']
         lat = _r['location']['lat']
         lng = _r['location']['lng']
-
-        lat_str = str(lat).replace(".", "_")
-        lat_str = str(lat_str).replace("-", "m")
-        lng_str = str(lng).replace(".", "_")
-        lng_str = str(lng_str).replace("-", "m")
-        latlng = f"{lat_str}_{lng_str}"
+        
+        latlng = make_latlng(lat, lng)
 
         review_dir = os.path.join(raw_review_dir, latlng)
         if not os.path.exists(review_dir):
             os.makedirs(review_dir)
+            print(f"Created directory: {review_dir}")
         file = os.path.join(review_dir, f'{datetime}_{review_id}.json')
         with open(file, 'w') as f:
             json.dump(_r, f)
@@ -141,3 +137,9 @@ def time_difference(current_time_str, previous_time_str, time_format = "%Y_%m_%d
     previous_time = datetime.strptime(previous_time_str, time_format)
     time_diff = current_time - previous_time
     return time_diff
+
+def make_latlng(lat, lng):
+    lat_str = "{:.7f}".format(lat).replace(".", "_").replace("-", "m")
+    lng_str = "{:.7f}".format(lng).replace(".", "_").replace("-", "m")
+
+    return f"{lat_str}_{lng_str}"

@@ -115,15 +115,15 @@ class PetFriendlyJudger():
         else:
             url = f'https://www.google.com/maps/place/?q=place_id:{input_info}'
         url_list = [{'url': url}]
-        place_id, _r1_place_name = self.pm.seek_and_update(url_list, freeze_mins=self.freeze_mins)
+        latlng, official_name = self.pm.check_and_update(url_list, freeze_mins=self.freeze_mins)
 
-        place_id_w_keyword_list = os.listdir(self.filter_review_dir)
-        if not (place_id in place_id_w_keyword_list):
+        latlng_w_keyword_list = os.listdir(self.filter_review_dir)
+        if not (latlng in latlng_w_keyword_list):
             judge_result = EmptyIterator()
         else: 
-            place_id_w_keyword_dir = os.path.join(self.filter_review_dir, place_id)
-            fn_list = os.listdir(place_id_w_keyword_dir)
-            fn_path_list = [os.path.join(place_id_w_keyword_dir, _fn) for _fn in fn_list]
+            latlng_w_keyword_dir = os.path.join(self.filter_review_dir, latlng)
+            fn_list = os.listdir(latlng_w_keyword_dir)
+            fn_path_list = [os.path.join(latlng_w_keyword_dir, _fn) for _fn in fn_list]
             judge_input = self._gather_judge_input(self.guide_path, fn_path_list)
             judge_result = talk2gpt(judge_input, if_stream=if_stream)
         ### The following is designed to save money
@@ -150,8 +150,6 @@ class PetFriendlyJudger():
                 # we ask chatgpt use @@@@@ to seperate answer and reason.
         ### END
         if if_stream:
-            return _r1_place_name, judge_result
+            return official_name, judge_result
         else:
-            answer, reason = judge_result.split("@@@@@")
-
-            return answer, reason
+            assert 1==0, 'Not implemented.'
