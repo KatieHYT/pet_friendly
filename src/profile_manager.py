@@ -98,7 +98,7 @@ class ProfileManager():
                 print("The url is not in last_update_dt_df")
                 return None, None
 
-    def seek_and_update(self, url_list, freeze_mins=7500):
+    def seek_and_update(self, url_list, freeze_mins):
         # TODO(kt):  this data format is to fit apify
         url = url_list[0]['url']
         # seek

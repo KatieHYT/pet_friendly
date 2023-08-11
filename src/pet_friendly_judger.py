@@ -47,6 +47,8 @@ class PetFriendlyJudger():
         self.storeid2storename_map = read_json(pfj_src_dict['storeid2storename_map_path'])
         self.last_update_dt_df_path = pfj_src_dict['last_update_dt_df_path']
         self.url2latlng_path = pfj_src_dict['url2latlng_path']
+        self.freeze_mins = pfj_src_dict['freeze_mins']
+
         apify_api_key = get_file_contents(pfj_src_dict['apify_api_key_path'])
         self.pm = ProfileManager(
                 apify_api_key=apify_api_key,
@@ -113,7 +115,7 @@ class PetFriendlyJudger():
         else:
             url = f'https://www.google.com/maps/place/?q=place_id:{input_info}'
         url_list = [{'url': url}]
-        place_id, _r1_place_name = self.pm.seek_and_update(url_list)
+        place_id, _r1_place_name = self.pm.seek_and_update(url_list, freeze_mins=self.freeze_mins)
 
         place_id_w_keyword_list = os.listdir(self.filter_review_dir)
         if not (place_id in place_id_w_keyword_list):
