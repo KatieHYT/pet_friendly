@@ -12,7 +12,8 @@ keyword_list = [
 ]
 
 if __name__ == '__main__':
-    review_dir = './raw_review/'
+    review_dir = '/TOP/home/kt/DATA/cradle/google_review/raw_review/'
+    filter_review_dir = '/TOP/home/kt/DATA/cradle/google_review/filtered_review/'
     place_id_list = os.listdir(review_dir)
     for _place_id in place_id_list:
         place_dir = os.path.join(review_dir, _place_id)
@@ -33,7 +34,7 @@ if __name__ == '__main__':
             
             if review_text and any(word in review_text for word in keyword_list):
                 print(review_text)
-                save_dir = f'./filtered_review/{place_id}'
+                save_dir = os.path.join(filter_review_dir, place_id)
                 
                 if not os.path.exists(save_dir):
                     os.makedirs(save_dir)
